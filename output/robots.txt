@@ -1,0 +1,4 @@
+Sitemap: https://zplizzi.github.io/sitemapindex.xml
+
+User-Agent: *
+Host: zplizzi.github.io
