@@ -47,8 +47,8 @@ TRANSLATIONS_PATTERN = '{path}.{lang}.{ext}'
 
 NAVIGATION_LINKS = {
     DEFAULT_LANG: (
-        ("/index.html", "Home"),
-        ("/pages/ai-safety", "AI Safety"),
+        ("/", "Home"),
+        ("/ai-safety", "AI Safety"),
     ),
 }
 
@@ -128,9 +128,9 @@ POSTS = (
     ("posts/*.html", "posts", "post.tmpl"),
 )
 PAGES = (
-    ("pages/*.html", "pages", "page.tmpl"),
-    ("pages/index.md", "pages", "home.tmpl"),
-    ("pages/*.md", "pages", "page.tmpl"),
+    ("pages/*.html", "", "page.tmpl"),
+    ("pages/index.md", "", "home.tmpl"),
+    ("pages/*.md", "", "page.tmpl"),
 )
 
 
