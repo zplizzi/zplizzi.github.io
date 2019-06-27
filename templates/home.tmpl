@@ -21,16 +21,10 @@
     ${helper.twitter_card_information(post)}
     ${helper.meta_translations(post)}
     ${math.math_styles_ifpost(post)}
-
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro|Source+Serif+Pro&display=swap" rel="stylesheet">
-
 </%block>
 
 <%block name="content">
 <article class="post-${post.meta('type')} h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article">
-
-    <h1>${post.title()}</h1>
-
     <div class="e-content entry-content" itemprop="articleBody text">
     ${post.text()}
     </div>

@@ -128,9 +128,9 @@ POSTS = (
     ("posts/*.html", "posts", "post.tmpl"),
 )
 PAGES = (
-    # ("pages/index.md", "", "page.tmpl"),
-    ("pages/*.md", "pages", "page.tmpl"),
     ("pages/*.html", "pages", "page.tmpl"),
+    ("pages/index.md", "pages", "home.tmpl"),
+    ("pages/*.md", "pages", "page.tmpl"),
 )
 
 
@@ -948,11 +948,15 @@ PRETTY_URLS = True
 #       with the MarkdownExtension class and should not be added here.
 # Defaults are markdown.extensions.(fenced_code|codehilite|extra)
 # markdown.extensions.meta is required for Markdown metadata.
-MARKDOWN_EXTENSIONS = ['markdown.extensions.fenced_code', 'markdown.extensions.codehilite', 'markdown.extensions.extra']
+MARKDOWN_EXTENSIONS = ['markdown.extensions.fenced_code', 'markdown.extensions.codehilite', 'markdown.extensions.extra', "toc"]
 
 # Options to be passed to markdown extensions (See https://python-markdown.github.io/reference/)
 # Default is {} (no config at all)
-# MARKDOWN_EXTENSION_CONFIGS = {}
+MARKDOWN_EXTENSION_CONFIGS = {
+    DEFAULT_LANG: {
+        # "toc": {"title": "Contents"},
+    },
+}
 
 
 # Extra options to pass to the pandoc command.

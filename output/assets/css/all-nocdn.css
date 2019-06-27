@@ -1083,3 +1083,261 @@ article .metadata {
     }
 }
 
+/* all lifted directly from Gwern's CSS */
+
+/*********/
+/* FONTS */
+/*********/
+
+
+body {
+    padding: 0;
+    margin: 0;
+
+    background-color: #fff;
+    color: #000;
+
+    font-weight: 400;
+    font-family: "Source Serif Pro", Baskerville, "Libre Baskerville", serif;
+}
+
+/*********/
+/* LINKS */
+/*********/
+
+a {
+    /* color: #3c3c3c; /1* off-black *1/ */
+    text-decoration: none;
+}
+article > :not(.toc) a:hover,
+#footer a:hover {
+    color: #888;
+}
+
+#markdownBody a {
+    word-wrap: break-word; /* force the occasional inline URL or other long word to break at max-width */
+}
+
+
+/*********************/
+/* TABLE OF CONTENTS */
+/*********************/
+
+.toc {
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    font-family: "Lucida Sans Unicode", "Source Sans Pro", Helvetica, "Trebuchet MS", sans-serif;
+    margin: 0 2rem 1.5rem 0;
+    line-height: 1.25;
+    padding: 10px 10px 2px 14px;
+    position: relative;
+    z-index: 1;
+}
+
+.toc:empty {
+    display: none;
+}
+
+/*  On mobile, we want the toc to be inline, but for desktop, we want it side by side with the content.
+    */
+@media only screen and (max-width: 128ch) {
+    .toc {
+        font-size: 0.95rem;
+    }
+}
+@media only screen and (max-width: 120ch) {
+    .toc {
+        font-size: 0.90rem;
+    }
+}
+@media only screen and (max-width: 112ch) {
+    .toc {
+        font-size: 0.85rem;
+        margin: 0 1.5rem 1.25rem 0;
+    }
+}
+@media only screen and (max-width: 104ch) {
+    .toc {
+        font-size: 0.80rem;
+        margin: 0 1.25rem 1rem 0;
+    }
+}
+@media only screen and (max-width: 96ch) {
+    .toc {
+        margin: 0 1rem 1rem 0;
+    }
+}
+@media only screen and (min-width: 90ch) {
+    .toc {
+        float: left;
+        max-width: 30ch;
+    }
+}
+@media only screen and (max-width: 90ch) {
+    .toc {
+        float: none;
+        margin: 2em auto;
+        font-size: 1rem;
+    }
+    .toc > ul > li > ul {
+        column-count: 2;
+    }
+    .toc > ul > li > ul > li > ul {
+        break-inside: avoid;
+    }
+}
+@media only screen and (max-width: 64.9ch) {
+    .toc a {
+        display: inline-block;
+    }
+    .toc > ul > li > ul {
+        column-count: 1;
+    }
+    .toc li li a {
+        padding: 0 0 1px 0;
+    }
+    .toc li li li a {
+        padding: 0 0 2px 0;
+    }
+    .toc li li li li a {
+        padding: 0 0 3px 0;
+    }
+    .toc li li li li a {
+        padding: 0 0 4px 0;
+    }
+}
+
+/*=-----------------=*/
+/*= toc list layout =*/
+/*=-----------------=*/
+
+.toc ul {
+    list-style-type: none;
+    padding-left: 0em;
+    margin-bottom: 0;
+    margin-top: 4px;
+    padding-left: 1.4em;
+    text-indent: 0;
+    padding: 0;
+}
+.toc ul ul {
+    list-style-type: none;
+    padding-left: 0.7em;
+    margin-top: 2px;
+}
+
+.toc li {
+    font-weight: bold;
+    margin: 5px 0 10px 0;
+    padding-left: 1.125em;
+    position: relative;
+    overflow-wrap: break-word;
+}
+.toc li li {
+    margin-bottom: 0;
+    font-weight: normal;
+    font-size: 0.9em;
+}
+
+.toc p {
+    margin-top: 9px;
+    margin-bottom: 3px;
+}
+
+/*=------------------=*/
+/*= toc link styling =*/
+/*=------------------=*/
+
+.toc a {
+    border: 0;
+    display: block;
+    position: relative;
+}
+.toc a:hover {
+    background-color: rgba(0,0,0,0.05);
+    color: #000;
+}
+.toc a:hover::after {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    background-color: #ccc;
+    width: 0.25em;
+    height: 100%;
+}
+
+/*=--------------------------=*/
+/*= Inline code in toc links =*/
+/*=--------------------------=*/
+
+.toc code {
+    font-family: inherit;
+    font-size: inherit;
+    border: none;
+    padding: 0;
+    background-color: inherit;
+}
+
+/*=-------------------------------=*/
+/*= Wikipedia-style toc numbering =*/
+/*=-------------------------------=*/
+
+.toc > ul {
+    counter-reset: htoc_1;
+}
+.toc > ul > li::before {
+    counter-increment: htoc_1;
+    content: counter(htoc_1) "\2006  ";
+}
+.toc > ul ul {
+    counter-reset: htoc_2;
+}
+.toc > ul ul li::before {
+    counter-increment: htoc_2;
+    content: counter(htoc_1) "." counter(htoc_2) "\2006  ";
+}
+.toc > ul ul ul {
+    counter-reset: htoc_3;
+}
+.toc > ul ul ul li::before {
+    counter-increment: htoc_3;
+    content: counter(htoc_1) "." counter(htoc_2) "." counter(htoc_3) "\2006  ";
+}
+.toc > ul ul ul ul {
+    counter-reset: htoc_4;
+}
+.toc > ul ul ul ul li::before {
+    counter-increment: htoc_4;
+    content: counter(htoc_1) "." counter(htoc_2) "." counter(htoc_3) "." counter(htoc_4) "\2006  ";
+}
+.toc > ul ul ul ul ul {
+    counter-reset: htoc_5;
+}
+.toc > ul ul ul ul ul li::before {
+    counter-increment: htoc_5;
+    content: counter(htoc_1) "." counter(htoc_2) "." counter(htoc_3) "." counter(htoc_4) "." counter(htoc_5) "\2006  ";
+}
+.toc > ul ul ul ul ul ul {
+    counter-reset: htoc_6;
+}
+.toc > ul ul ul ul ul ul li::before {
+    counter-increment: htoc_6;
+    content: counter(htoc_1) "." counter(htoc_2) "." counter(htoc_3) "." counter(htoc_4) "." counter(htoc_5) "." counter(htoc_6) "\2006  ";
+}
+.toc ul li::before {
+    position: absolute;
+    right: calc(100% - 1em);
+    width: 12ch;
+    text-align: right;
+    font-weight: normal;
+    opacity: 0.4;
+    pointer-events: none;
+}
+.toc ul li:hover::before {
+    opacity: 0.7;
+}
+
+
+

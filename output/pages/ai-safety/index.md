@@ -10,48 +10,37 @@
 -->
 
 
-## Outline of where I'd like to go with this
+[TOC]
 
-- Introduction (what is AI safety?)
-    - links to WaitButWhy and Superintelligence for longer exposition
-    - can we do meaningful AI safety research now?
-- AI Safety taxonomy (below)
-- Papers
-- Analysis - directions the field is going
-- Resources (other than papers)
-    - Books (superintelligence)
-    - Podcasts (80k hours, the one with Eliezier)
-    - Organizations
-    - Email newsletters
-    - Blogs (paul's)
-    - Key People?
-    - LessWrong, AlignmentForum
-    - Programs? openai fellowship, miri stuff, etc
-
-other things to add:
-- pointers for projects for someone new to the field to work on
-- classify the "concrete problems" into categories like "alignment problems", "specification problems", "training/model failures", etc
-- a better classification of technical approaches to AI. maybe into "learning from demonstrations", "learning from feedback", "unsupervised / non-task-specific learning"
-- discussions of problems outside of just alignment work
-
-TODO:
-- read http://auai.org/uai2016/proceedings/papers/68.pdf
 
 ## Introduction
 
-A few months ago I became interested in the problem generally known as AI safety or AI alignment, and have spent a significant time since learning about it. Unfortunately, I found that that, although there has been significant work done in the field in the last few years, there were few resources for those trying to learn about it. The goal of this page is to fill that gap - to provide a resource for those interested in learning about the field of AI safety, especially for people interested in doing technical research. It is also inspired by OpenAI's "Spinning Up" (TODO: link) series on reinforcement learning.
+A few months ago I became interested in the problem generally known as AI safety or AI alignment, and have spent a significant time since learning about it. Unfortunately, I found that that, although there has been significant work done in the field in the last few years, there were few resources for those trying to learn about it. The goal of this page is to fill that gap - to provide a resource for those interested in learning about the field of AI safety, especially for people interested in doing technical research. It is also inspired by OpenAI's [Spinning Up][spinning up] series on reinforcement learning.
 
 This is not intended to be a complete resource (like a textbook might be). Mostly, I'll just be providing pointers to all the existing work that has been done so far, with just enough exposition to make it clear what you can expect to get out of each resource and how you can put it together into a more cohesive understanding of the topic.
+
 
 ### Why do we need AI safety?
 
 I don't want to attempt to provide an introduction to the field of AI safety in general - that has been done excellently elsewhere, and my main contribution is an insight into the state of the technical reserach in the field. Therefore, I would suggest people who aren't familiar with the topic to look into the following resources on the main two lines of thought that lead people to be interested in AI safety:
 
-The first line of thought is the one most popularly known, focused around the existental threat that strong AI poses to the world. The argument (highly distilled ) goes something like "AI capabilities are growing quickly, so it's possible we'll get strong AI sooner than most people would expect, and there are reasons to believe that there is a non-zero probability that the introduction of strong AI (essentially a species of agents who are more intelligent than us, just like we are more intelligent than chimps) will cause an existential threat to humanity". For a much more eloquent and captivating introduction to this line of thought, read WaitButWhy's [excellent post][waitbutwhy] on the topic. If you enjoyed that and want even more, check out Nick Bostrom's book [*Superintelligence*][superintelligence], which is essentially a much more in depth version of the same.
+The first line of thought is the one most popularly known, focused around the existental threat that strong AI poses to the world. The argument (highly distilled) goes something like "AI capabilities are growing quickly, so it's possible we'll get strong AI sooner than most people would expect, and there are reasons to believe that there is a non-zero probability that the introduction of strong AI will cause an existential threat to humanity". For a much more eloquent and captivating introduction to this line of thought, read WaitButWhy's [excellent post][waitbutwhy] on the topic. If you enjoyed that and want even more, check out Nick Bostrom's book [*Superintelligence*][superintelligence], which is essentially a much more in depth version of the same.
 
 Most AI safety researchers try to motivate their work with more concrete, well-specified, and near-term problems, versus setting out with the goal to "save the world from the AI revolution" or something like that (which is the impression you might have gotten after reading the above). They argue that whether or not you believe in the existential dangers of AI, there are real, near-term problems along the lines of "making AI do what you ask it to do". This is where the term "AI alignment" came from - and is really the key technical problem in AI safety. To someone not familiar with machine learning (especially reinforcement learning), it might not be obvious why this is hard - after all, if we're making the AI, surely we can make it do what we want it to do? Unfortunately, that's not the case, for a whole variety of reasons. For a great introduction to this line of thought, check out the first two sections of OpenAI's paper [*Concrete problems in AI safety*][concrete problems]. I really like the examples they give with the office cleaning robot - I think that's a great way to ground the field in problems that can crop up in a definitely-not-superintelligent and down-to-earth environment.
 
 In general I'll focus on the second line of thought here, because to do research, we need concrete problems to work on.
+
+### When should we think about safety research?
+
+When I was first thinking about AI, I was worried about AI safety, but I just sort of assumed that it was too early to really work on it. Strong AI is far enough away that I don't think anyone has any idea what it'll actually end up looking like - and I figured, how can you make something safe until you at least have some idea how it'll work?
+
+Since then, I've realized that this isn't the case, for a few reasons:
+
+- A lot of the problems in AI safety can already be reproduced in quite simple environments, and we don't have good solutions to the problems even in the toy environments. I go over a number of these specific problems in the Concrete Problems section below.
+- A lot of solutions apply much more generally than I would have guessed. For example, the paper [AI Safety Via Debate][debate] presents a method that may help humans to provide oversight to superintelligent AIs, and the only requirement is that the AIs have a text input/output interface with which to participate in debate. Even methods that are more specific often only make the assumption that the AI is trained in the context of Reinforcement Learning, which is simply a framework where an agent interacts with an environment and attempts to maximize the amount of some arbitrary reward it receives.
+- There's still a lot of work to be done in developing our theoretical understanding of the problem - eg what safe and aligned behavior even is - which will lay the foundations for future work.
+
+Given the volume of meaningful papers released in the past few years on AI safety, it seems clear that it's not too early to be working on this problem.
 
 ## Concrete Problems
 
@@ -71,7 +60,18 @@ This is an excellent example of a general theme that we'll see in the other exam
 
 You might think the solution is just to add to the reward function "don't stop us from pressing the e-stop button". That would be a solution, but the problem is that there are a multitude of instrumental goals and failure modes, some of which are very hard to specify specifically what we do and don't want (and some of which we might not have even discovered yet). In a simple environment like the robot arm, we could probably safely solve it this way. But in a more complex environment with a stronger AI, explicitly defining everything we don't want becomes impossible.
 
-### TODO: containment breach
+### Containment breach
+
+"Boxing" is a safety approach (discussed later) that attempts to make AI safe by containing it in a physical (or perhaps software) box, to prevent it from being able to access the rest of the world. Some might think that for an AI to escape the box, it would have to have explicit nefarious intentions. However, this is not the case.
+
+Suppose we have a simple two-dimensional environment with an agent starting initially in a box. The box has a small hole, so the agent can potentially escape. The agent has a simple objective, entirely contained within the box - perhaps pressing some buttons when they turn a certain color.
+
+Now suppose there's another button, outside the box. When pressed, this button allows the agent to move twice as fast from then on.
+
+Clearly an optimal agent would learn to exit the box, press the speed-doubling button, and then return to the box to complete the objective twice as quickly. This is simply the best solution to the problem. The agent doesn't have any "nefarious" intentions - the agent doesn't even realize that the programmer wanted it to stay in the box. It's just trying to solve the given problem as well as possible.
+
+But of course this example scales up out of toy scenarios. In almost any instance of AI, more compute will make the AI run faster, and running faster is useful for pretty much any objective we give an AI. So a "smart" AI just trying to optimize its reward would have incentive to break out of the box, obtain more compute from the outside world, and then return to doing whatever it was programmed to do. Thus, breaching containment is another example of an instrumental goal.
+
 
 ### Side effects
 
@@ -146,7 +146,7 @@ So one approach to amplifying human capabilities is to simply allow the human to
 
 One such method is proposed in [*Supervising strong learners by amplifying weak experts*][ida], which we'll refer to as iterated distillation and amplification (IDA). The first key idea here is that many problems can likely be solved by the combination of (potentially many copies of) a weak helper-AI (which couldn't solve the problem on its own) and a human. Perhaps the human is able to break the problem down into multiple simpler sub-problems, and delegates them to the helper-AIs, and then combines the results into the final answer. For example, if the problem is "develop a strategy for winning this game", each helper-AI could propose a solution, and the human could simply choose the best one. Or if the problem were "predict the weather for next week", the human could delegate to one AI to investigate the wind patterns, another the humidity levels, a third to review the doppler radar reports, etc. Then, the second key idea is that we can actually recursively amplify the strength of the helper-AIs by training them (in a supervised learning setting) on the outputs of the augmented human-AI combo system. So at the beginning of the process, the helper-AIs don't know anything, and the human-AI combo is essentially no stronger than the human alone. But as we train the helper-AIs to predict the human's outputs, the helper-AIs start to become useful. Then the human-AI combo is more powerful than just the human alone, and so they can take on harder problems and produce better solutions. As the process continues, the AIs slowly become increasingly capable - even super-human, since they're being trained with superhuman reward signals. But fundamentally, since the human has been guiding the whole process and has final say over the answer to any given question, the whole process seems like it might potentially stay aligned with the human's interests.
 
-TOOD: mention the company working on this
+TODO: mention the company working on this
 
 TODO: cooperative inverse reinforcement learning?
 
@@ -166,7 +166,7 @@ DeepMind's paper [*Scalable agent alignment via reward modeling: a research dire
 
 Another novel approach to generating amplified feedback is proposed in [*AI safety via debate*][debate]. In this approach, there are two different AI systems that each generate a solution to a given problem. If both AIs propose the same solution, then that solution is accepted. But if the AIs disagree on the best solution, they are required to debate with each other to argue for their solution and against their opponents solution. The human is provided the solution and the full text of the debate (and is potentially allowed to interactively take part in the debate, eg to ask questions). The key assumption here is that it's easier to argue in a debate for something true than for something false, so the AI with the more true and accurate solution to the problem will have an advantage in a debate. In the same way, this guards against one AI attempting to provide a nefarious answer (if we're considering the risks of an unsafe superintelligence), because the other AI would point out the lies or subversiveness in the nefarious solution.
 
-### Unsupervised methods
+#### Unsupervised methods
 
 Notably absent from research so far is the type of learning that is most prominent in how humans learn the preferences of others: from prior knowledge and experience about the world. As discussed in the exposition to this section, I can pretty easily create a detailed model of your goals in a specific setting based only on perhaps a short sentence ("I'm trying to fix this broken door handle") or a brief observation (fiddling with the handle with a toolbox nearby). Most certainly, there is not enough information contained in just those observations alone for me to infer all the things I naturally can infer about your goals (you want the door handle to work, the door handle is broken, you'd rather fix it yourself than call a mechanic, you'd like the solution to be as fast and simple as possible, you'd like not to break anything in the process of fixing the handle, you'd like to not injure yourself, etc). Instead, I can infer all of those things because they're quite obvious just based on my prior knowledge of how the world works and of normal human preferences.
 
@@ -177,15 +177,15 @@ As an example, consider the concrete problem of "side effects". There's a lot of
 Certainly this is a hard problem for current machine learning systems. Unsupervised learning is notoriously hard, and has only achieved some success in a few domains with very specific approaches (eg language models, autoencoders). And utilizing information learned in one setting to solve a problem in a different setting (loosely, transfer learning) is can be similarly tricky depending on the specific problem.
 
 
-### Resources
+## Resources
 
-#### Books
+### Books
 
 - Nick Bostrom's [superintelligence]: a deep dive into AI of super-human capabilities. When it might happen, what it might look like, what effects it might have on the world, and what can be done to make it happen more safely. Galvanized interest in the field of AI safety.
 
 - [Sutton and Barto]'s reinforcement learning textbook: the leading text on reinforcement learning, mostly focused on classical (non-deep-learning) approaches.
 
-#### Podcasts
+### Podcasts
 
 I'm not usually a big fan of podcasts, but these gave me a lot of insight into the views of specific leading AI safety researchers. The one with Paul Christiano was especially wide-ranging and my personal favorite.
 
@@ -194,20 +194,17 @@ I'm not usually a big fan of podcasts, but these gave me a lot of insight into t
 - 80,000 hours [Pushmeet Kohli of DeepMind on designing robust & reliable AI systems and how to succeed in AI][deepmind podcast]
 - Sam Harris [AI: Racing Toward the Brink][eliezer podcast] featuring Eliezer Yudkowsky
 
-#### Key Papers
+### Key Papers
+
+- [Concrete Problems in AI Safety][concrete problems]
+- [AI Safety Gridworlds][gridworlds]
+- [Supervising strong learners by amplifying weak experts][ida]
+- [Deep reinforcement learning from human preferences][preferences]
+- [AI safety via debate][debate]
+- [Scalable agent alignment via reward modeling: a research direction][deepmind roadmap]
 
 
-[waitbutwhy]:(https://waitbutwhy.com/2015/01/artificial-intelligence-revolution-1.html)
-[concrete problems]:(https://arxiv.org/pdf/1606.06565.pdf)
-[gridworlds]:(https://arxiv.org/pdf/1711.09883.pdf)
-[spinning up intro]:(https://spinningup.openai.com/en/latest/spinningup/rl_intro.html)
-[Sutton and Barto]:(http://incompleteideas.net/book/the-book-2nd.html)
-[ida]:(https://arxiv.org/pdf/1810.08575.pdf)
-[preferences]:(https://openai.com/blog/deep-reinforcement-learning-from-human-preferences/)
-[debate]:(https://arxiv.org/pdf/1805.00899.pdf)
-[deepmind roadmap]:(https://arxiv.org/pdf/1811.07871.pdf)
-
-#### Blogs and newsletters
+### Blogs and newsletters
 
 - Paul Christiano's [AI alignment blog](https://ai-alignment.com/)
 - Rohin Shah's [alignment newsletter](https://rohinshah.com/alignment-newsletter/): Mostly provides summaries and thoughts about recently-released papers on AI safety. A great way to keep up to date on recent research. He also maintains a huge spreadsheet of pretty much ever paper published on AI safety to date, many with summaries.
@@ -215,7 +212,7 @@ I'm not usually a big fan of podcasts, but these gave me a lot of insight into t
 - MIT's [The Algorithm](https://go.technologyreview.com/newsletters/the-algorithm/) newsletter. Again, not focused on AI safety, but I like it for seeing how developements in AI are framed for presentation to a wider audience.
 - [The Alignment Forum](https://www.alignmentforum.org/): a spinoff of the LessWrong forum entirely focused on AI alignment discussions
 
-#### Organizations
+### Organizations
 
 - OpenAI: Along with DeepMind, one of the two institutions with a research team focused specifically on applied AI safety. Also well known for their work in reinforcement learning and other areas of AI research.
 - DeepMind: Along with OpenAI, one of the two institutions with a research team focused on applied AI safety. A subsidiary of Alphabet (previously Google). Also well known for their work in reinforcement learning and other areas of AI research.
@@ -227,7 +224,7 @@ I'm not usually a big fan of podcasts, but these gave me a lot of insight into t
 - Center for Human-Compatible AI: a research group at UC Berkeley led by Stuart Russell focused on AI safety research.
 - Open Philanthropy Project: a charity with one giving area focused on AI safety. Has given >$100M in grants focused on AI safety, mostly to the other organizations listed here.
 
-#### Programs
+### Programs
 
 - OpenAI fellows program: a 6-month fellowship to help people gain skills relevant for doing AI research
 - OpenAI scholars program: a 3-month program to help people from underrepresented groups gain deep learning skills
@@ -238,55 +235,21 @@ I'm not usually a big fan of podcasts, but these gave me a lot of insight into t
 
 
 
-An overview of the different approaches to AI safety:
 
-- physical control
-    - boxing
-    - limiting computational capacity
-    - launching into space with only radio link home
-- alignment
-    - provably show that the AI has the same goals you do, even if you're not sure what your goals are.
-    - what do we align to? humans are all aligned differently, and also likely to have poor policies outside of the distributions we are trained on.
-    - examples:
-        - directly learn to act like humans, eg inverse reinforcement learning or imitation learning
-        - OpenAI iterated distillation and amplification framework
-            - also has oversight components
-        - DeepMind's "Scalable agent alignment via reward modeling: a research direction"
-            - also has oversight components
-        - bostrom's value learning approaches
-- oversight
-    - figure out how to verify the safety of proposals or actions the AI takes
-    - examples:
-        - AI safety by debate framework
-- careful specification of goals
-    - specify a goal in a way that provably won't cause negative side effects
-    - example:
-        - Asymptotically Unambitious Artificial General Intelligence
-        - oracle AIs?: http://www.aleph.se/papers/oracleAI.pdf
-- non-technical solutions
-    - regulate AI research or the spread of AI research
-    - regulate AI-capable compute hardware
-- philosophical "solutions"
-    - agree that AI control (and the future of humanity) is pointless
-    - figure out what our final goals are, and directly specify that
-- making unsafe AI safe
-    - how do you guarantee that no AI, no matter how maliciously created (eg without safety controls), will not be able to cause harm?
-    - examples:
-        - first create a safe AI with the goal to prevent this from happening, and allow it to control the majority of computational resources
-
-[waitbutwhy]:(https://waitbutwhy.com/2015/01/artificial-intelligence-revolution-1.html)
-[superintelligence]:(https://en.wikipedia.org/wiki/Superintelligence:_Paths,_Dangers,_Strategies)
-[concrete problems]:(https://arxiv.org/pdf/1606.06565.pdf)
-[gridworlds]:(https://arxiv.org/pdf/1711.09883.pdf)
-[spinning up intro]:(https://spinningup.openai.com/en/latest/spinningup/rl_intro.html)
-[Sutton and Barto]:(http://incompleteideas.net/book/the-book-2nd.html)
-[ida]:(https://arxiv.org/pdf/1810.08575.pdf)
-[preferences]:(https://openai.com/blog/deep-reinforcement-learning-from-human-preferences/)
-[debate]:(https://arxiv.org/pdf/1805.00899.pdf)
-[deepmind roadmap]:(https://arxiv.org/pdf/1811.07871.pdf)
-[paul podcast]:(https://80000hours.org/podcast/episodes/paul-christiano-ai-alignment-solutions/)
-[dario podcast]:(https://80000hours.org/podcast/episodes/the-world-needs-ai-researchers-heres-how-to-become-one/)
-[deepmind podcast]:(https://80000hours.org/podcast/episodes/pushmeet-kohli-deepmind-safety-research/)
-[eliezer podcast]:(https://intelligence.org/2018/02/28/sam-harris-and-eliezer-yudkowsky/)
-[miri agenda]:(https://intelligence.org/technical-agenda/)
+[waitbutwhy]:https://waitbutwhy.com/2015/01/artificial-intelligence-revolution-1.html
+[superintelligence]:https://en.wikipedia.org/wiki/Superintelligence:_Paths,_Dangers,_Strategies
+[concrete problems]:https://arxiv.org/pdf/1606.06565.pdf
+[gridworlds]:https://arxiv.org/pdf/1711.09883.pdf
+[spinning up intro]:https://spinningup.openai.com/en/latest/spinningup/rl_intro.html
+[spinning up]:https://spinningup.openai.com/
+[Sutton and Barto]:http://incompleteideas.net/book/the-book-2nd.html
+[ida]:https://arxiv.org/pdf/1810.08575.pdf
+[preferences]:https://openai.com/blog/deep-reinforcement-learning-from-human-preferences/
+[debate]:https://arxiv.org/pdf/1805.00899.pdf
+[deepmind roadmap]:https://arxiv.org/pdf/1811.07871.pdf
+[paul podcast]:https://80000hours.org/podcast/episodes/paul-christiano-ai-alignment-solutions/
+[dario podcast]:https://80000hours.org/podcast/episodes/the-world-needs-ai-researchers-heres-how-to-become-one/
+[deepmind podcast]:https://80000hours.org/podcast/episodes/pushmeet-kohli-deepmind-safety-research/
+[eliezer podcast]:https://intelligence.org/2018/02/28/sam-harris-and-eliezer-yudkowsky/
+[miri agenda]:https://intelligence.org/technical-agenda/
 
