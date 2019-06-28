@@ -10,7 +10,19 @@
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
 <link rel="canonical" href="https://zplizzi.github.io/galleries/">
-<!--[if lt IE 9]><script src="../assets/js/html5.js"></script><![endif]--><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script><!--[if lt IE 9]><script src="../assets/js/html5.js"></script><![endif]--><link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
 <style type="text/css">
     #gallery_container {
         position: relative;
@@ -48,9 +60,16 @@
             <ul class="navbar-nav nav-fill d-flex w-100">
 <li class="nav-item">
 <a href="../" class="nav-link">Home</a>
+            </li>
+<li class="nav-item dropdown">
+<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">ML/AI</a>
+            <div class="dropdown-menu">
+                    <a href="../ai-safety" class="dropdown-item">AI Safety</a>
+                    <a href="../rl" class="dropdown-item">Reinforcement Learning</a>
+            </div>
                 </li>
 <li class="nav-item">
-<a href="../ai-safety" class="nav-link">AI Safety</a>
+<a href="../contact" class="nav-link">Contact</a>
 
                 
             </li>

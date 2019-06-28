@@ -10,7 +10,19 @@
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
 <link rel="canonical" href="https://zplizzi.github.io/">
-<!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><meta name="author" content="Zack Polizzi">
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script><!--[if lt IE 9]><script src="assets/js/html5.js"></script><![endif]--><meta name="author" content="Zack Polizzi">
 <meta property="og:site_name" content="Zack Polizzi">
 <meta property="og:title" content="index">
 <meta property="og:url" content="https://zplizzi.github.io/">
@@ -46,9 +58,16 @@
             <ul class="navbar-nav nav-fill d-flex w-100">
 <li class="nav-item active">
 <a href="." class="nav-link">Home <span class="sr-only">(active)</span></a>
+            </li>
+<li class="nav-item dropdown">
+<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">ML/AI</a>
+            <div class="dropdown-menu">
+                    <a href="ai-safety" class="dropdown-item">AI Safety</a>
+                    <a href="rl" class="dropdown-item">Reinforcement Learning</a>
+            </div>
                 </li>
 <li class="nav-item">
-<a href="ai-safety" class="nav-link">AI Safety</a>
+<a href="contact" class="nav-link">Contact</a>
 
                 
             </li>
@@ -66,7 +85,7 @@
 <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><div class="e-content entry-content" itemprop="articleBody text">
     <div>
 <p>Hi! I'm Zack Polizzi. I sometimes work at <a href="https://www.culturebiosciences.com/">Culture Biosciences</a>, and other times hang out at <a href="https://www.southparkcommons.com/">South Park Commons</a> where I mostly read machine learning papers. Outside of working, I like to cook, climb, and (recently) play guitar.</p>
-<p>One thing I've been studying is AI safety, and I noticed there's not very many good summaries of technical research in the field. To that end, I wrote up a summary of what I've learned so far. <a href="pages/ai-safety">Check it out!</a></p>
+<p>One thing I've been studying is AI safety, and I noticed there's not very many good summaries of technical research in the field. To that end, I wrote up a summary of what I've learned so far. <a href="ai-safety">Check it out!</a></p>
 </div>
     </div>
     <aside class="postpromonav"><nav></nav></aside></article><!--End of body content--><footer id="footer">
