@@ -48,8 +48,13 @@ TRANSLATIONS_PATTERN = '{path}.{lang}.{ext}'
 NAVIGATION_LINKS = {
     DEFAULT_LANG: (
         ("/", "Home"),
-        ("/ai-safety", "AI Safety"),
-        ("/rl", "RL"),
+        (
+            (
+                ("/ai-safety", "AI Safety"),
+                ("/rl", "Reinforcement Learning"),
+            ),
+            "ML/AI",
+        ),
         ("/contact", "Contact"),
     ),
 }

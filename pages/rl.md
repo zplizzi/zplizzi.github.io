@@ -16,58 +16,66 @@
 
 ## Introduction
 
-TODO:
+This page contains the notes I've taken while learning about Reinforcement Learning (RL). It was written primarily to help me keep track of and make sense of what I was learning. When learning a new area of any scientific discipline, I don't try to understand any given paper in isolation. Most papers are 80% existing work and 20% of a new idea. Instead, I focus on figuring out exactly what the key new insight was (the 20%), and figure out where they pulled the 80% from. Then I go read those papers, and follow the same policy recursively.
 
-- add a section that describes all the formalization used
-- add links to papers
-- make sure math symbols are consistent
-- go through todos
-- figure out how to structure
-- write an overview/intro section
-- add hats over all estimators
+So, my paper notes are aimed mostly at figuring out exactly what the key insight of a given paper is, and what previous papers it built on. For RL, there are two main lines of research - action-value methods (eg Q learning) and policy gradient methods (eg REINFORCE, PPO). For each of these lines, I've started from the basics - in action-value methods, it's a classical understanding of the method in a tabular case, and in policy-gradient methods it's the policy gradient theorem. From there I try to understand the sequence of key ideas building on each other which eventually results in a good, well-grounded understanding of any given method of interest.
+
+There's a lot of seemingly really important papers that I haven't yet had time to study - especially papers unifying action-value methods with policy-gradient methods, like soft actor-critic. I hope to add those here at some point.
+
+This definitely isn't meant to be an "introduction to reinforcement learning" resource. For that I'd suggest [Reinforcement Learning: An Introduction](http://incompleteideas.net/book/the-book-2nd.html) by Sutton and Barto, which I will cite regularly.
+
+OpenAI's [Spinning Up](https://spinningup.openai.com/en/latest/index.html) is also an excellent resource for learning about all of this, especially the modern methods not covered in Sutton and Barto. I found the section on "key papers" to be most useful, and the majority of the papers here are from that list. However, it didn't include notes or even comments on most of the papers, so I think this page will be useful to someone looking to gain a better overview of current research without having to read each paper in detail.
+
+### Comparison of approaches
+
+There's a couple of different ways we can organize methods in RL.
+
+- We can compare on-policy methods and off-policy methods. This refers to whether training happens on samples collected while running the same policy that you're training (on-policy), or if samples come from some other policy (an older version of the trained policy, or random gameplay, or a human demonstrator, etc)(off-policy). In general, any off-policy algorithm can handle on-policy data, but an on-policy algorithm can't handle off-policy data.
+- We can compare policy gradient and action-value methods. This refers to the way the algorithm works. Action-value methods are based around estimating the value (expected return) of a state, or a state-action pair. A policy is then derived from this value function. Policy gradient methods focus on learning the policy directly.
 
 
-Updated comparison between various RL methods:
+Although there are exceptions to every rule, we can try to draw some general comparisons between the different approaches:
+
+#### Off-policy vs on-policy
 
 - off-policy:
-    - has a major advantage in sample complexity, because they can re-visit past experience in training.
-    - worse theoretical convergence guarantees, especially when combined with function approximation. see "deadly triad" in textbook.
-    - the Q function can only be learned off-policy trivially in small discrete action space - but in that situation, it can be learned rather effectively
-    - in general, works increasingly poorly as behavior policy and training policy are more different. if importance ratio is large or small, there's a lot of variance in updates, and the "deadly triad" examples especially come into play
-
+    - Has an advantage in sample complexity, because they can re-visit past experience in training.
+    - Has worse theoretical convergence guarantees, especially when combined with function approximation. This is referred to as the "deadly triad" and explained in detail in Sutton and Barto (11.3).
+    - The primary approach, Q-learning, only works in small, discrete action spaces - but it these environments, it works really well.
+    - In general, off-policy methods work increasingly poorly as the behavior policy and the training policy are increasingly different.
 - on-policy:
-    - major disadvantage in sample complexity, because they must collect new samples for every gradient step
-    - better theoretical convergence guarantees
-    - Q-learning doesn't work in large/continuous spaces, and q-learning is the strongest off-policy algorithm.
+    - Has a disadvantage in sample complexity, because they must collect new samples for every gradient step.
+    - Has better theoretical convergence guarantees, and works more stably in practice.
+
+#### Action-value vs policy gradient methods
 
 - value function methods
-    - can be on (eg TD) or off-policy (eg q-learning)
-    - significantly well-studied and well-developed in the tabular case
-    - works best in smaller, discrete action spaces
-        - discretizing continuous actions spaces meets the curse of dimensionality - if we have k divisions per dimension and n dimensions, we have n^k actions.
-    - naturally learns deterministic policies, which are exploitable by an adversary
-
+    - Can be on (eg TD) or off-policy (eg q-learning)
+    - Significantly well-studied and well-developed in the tabular case (most of Sutton and Barto focuses on this)
+    - Works best in smaller, discrete action spaces.
+        - Attempting to discretize a continuous actions spaces meets the curse of dimensionality - if we have k divisions per dimension and n dimensions, we have n^k actions.
+    - Naturally learns deterministic policies, which are exploitable by an adversary.
 - policy gradient methods
-    - traditionally on-policy, although it seems like there are off-policy extensions, eg DPG
-    - stronger convergence guarantees in the on-policy setting
-    - handles large and/or continuous action spaces easily
-    - able to learn stochastic policies naturally
-        - typically softmax for discrete space, and diagonal gaussian for continuous
+    - Traditionally on-policy, although there are off-policy extensions, eg DPG.
+    - Has stronger convergence guarantees in the on-policy setting.
+    - Handles large and/or continuous action spaces easily.
+    - Naturally learns stochastic policies, which are robust to adversial settings
 
 
-Overview of core methods in RL
+### Notation
 
-- The main distinction is the policy gradient (eg PPO) vs Q learning (DQN and successors).
-- There's a whole section of methods that aim to bring them together somewhat
-    - deterministic policy gradients train a continuous Q network and train the policy by ascending the gradient of the Q function.
-        - but seem to be hard to get working (not sure)
-    - entropy-regularized policy gradients (eg SAC) seem super interesting. there's all sorts of ways to go with this that I haven't fully explored, eg PCL
-- there's the idea of "distributional" networks which instead of learning a Q function (which learns the expected value of a state/action pair), attempts to learn the actual distribution of rewards from a state action pair. the idea being an expected value can lose a lot of important information.
+I'll try to use somewhat consistent notation throughout:
 
-
-Conclusions:
-
-- if you don't care that much about sample efficiency, it seems like PPO may still be the goto method.
+- We are dealing with a Markov decision process, where an interaction with the environment at time $t$ yields:
+    - $S_t$, the state of the environment at time t. May be partially observed.
+    - $A_t$, the action taken after observing $S_t$
+    - $R_t$, the rewards received after taking $A_t$
+    - $S_{t+1}$, the next state of the environment.
+- We have a (learned) policy $\pi(a|S_t)$ which represents the probability distribution over actions selected by the policy.
+- The expected discounted reward $\eta(\pi)$ is the expected reward of an episode (with given distribution over start states) under the policy $\pi$
+- $V_\pi(s)$ is the value function, the expected reward under policy $\pi$ from a given state
+- $Q_\pi(s, a)$ is the state-action value function, the expected reward under policy $\pi$ from a given state and action
+- $A_\pi(s, a) = Q_\pi(s, a) - V_\pi(s)$ is the advantage function
 
 
 ## Action-value methods
@@ -112,6 +120,8 @@ An accessory method, for choosing actions when you have a Q function. Basically 
 
 ### DQN
 
+[Playing Atari with Deep Reinforcement Learning](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)
+
 Three major objections are raised with on-policy algorithms:
 
 - Each sample can only be seen once in training (when it was gathered), since the policy will change after a parameter update and the sample would no longer be on-policy.
@@ -132,6 +142,8 @@ From the experimental results, this method was quite effective in the Atari doma
 
 ### Dueling DQN
 
+[Dueling Network Architectures for Deep Reinforcement Learning](https://arxiv.org/pdf/1511.06581.pdf)
+
 Proposes a small tweak to DQN: Instead of directly predicting $Q(s, a)$, the network has two heads, one which predicts $V(s)$ and the other predicts the advantage function $A(s, a)$. Then they are combined to get $Q$ following the equation $Q(s, a) = V(s) + A(s, a)$. Therefore, $V$ and $A$ are implicitly learned by training to predict $Q$.
 
 The idea is that learning $V$ and $A$ separately is easier than learning them combined - more factored representations are usually good in machine learning. Basically you're asserting a prior over the form of the function, which constrains the solution space, allowing your optimization power to focus more on valid solutions.
@@ -139,16 +151,19 @@ The idea is that learning $V$ and $A$ separately is easier than learning them co
 IMO, "dueling" seems like a bad name, it's not adversial in any way.
 
 ### Double Q learning
+[Deep Reinforcement Learning with Double Q-learning](https://arxiv.org/pdf/1509.06461.pdf)
 
 There is a known bias in the Q-learning algorithm, and a variant called double Q learning that addresses it (Sutton and Barto 6.7). This paper applies double Q learning to DQN.
 
 ### Prioritized Experience Replay
+[Prioritized Experience Replay](https://arxiv.org/pdf/1511.05952.pdf)
 
 In the experience replay method introduced with DQN, a large sliding window of experience is maintained and sampled from at random for training. This isn't ideal because some samples might be less interesting or useful than others, and we'd like to sample more useful samples more often to accelerate learning.
 
 The key idea is to sample more frequently samples that have high TD error, which is a measure of how bad our prediction was for a given transition. This seems like a pretty obviously good idea, but there are some technical details that need taken care of that most of the paper focuses on.
 
 ### Rainbow DQN
+[Rainbow: Combining Improvements in Deep Reinforcement Learning](https://arxiv.org/pdf/1710.02298.pdf)
 
 Doesn't introduce any new methods, but instead notes that there are a number of paper that suggested various (and mostly orthogonal) improvements to the core DQN approach. The ones considered in this paper are:
 
@@ -225,15 +240,9 @@ $$R_t + \gamma V(S_{t+1}) - V(S_t)$$
 - This is actually an estimator of the "advantage function", the function $A_\pi(s, a) = Q_\pi(s, a) - V_\pi(s)$. In the section on Generalized Advantage Estimation, we will review other estimators of the advantage function, which can be used in place of this estimator in actor-critic methods.
 
 ### Trust Region Policy Optimization (TRPO)
+[Trust Region Policy Optimization](https://arxiv.org/pdf/1502.05477.pdf)
 
-TODO: I don't understand the foundations of this paper.
-Let's formally define a few things:
-
-- the expected discounted reward $\eta(\pi)$ is the expected reward of an episode (with given distribution over start states) under the policy $\pi$
-- $V_\pi(s)$ is the value function, the expected reward under policy $\pi$ from a given state
-- $Q_\pi(s, a)$ is the state-action value function, the expected reward under policy $\pi$ from a given state and action
-- $A_\pi(s, a) = Q_\pi(s, a) - V_\pi(s)$ is the advantage function
-- $\eta(\tilde\pi)$ is the cumulative advantage of $\tilde\pi$ over $\pi$, ie the difference in expected rewards of $\tilde\pi$ over $\pi$.
+Let $\eta(\tilde\pi)$ be the cumulative advantage of $\tilde\pi$ over $\pi$, ie the difference in expected rewards of $\tilde\pi$ over $\pi$.
 
 The problem addressed here is how to guarantee that at each step of a policy gradient algorithm, the expected reward under the policy is monotonically increasing. Formally, how do we ensure that $\eta(\tilde\pi) > 0$ for every step, if $\tilde\pi$ is the new policy after the step?
 
@@ -247,6 +256,7 @@ Basically the rest of the paper derives such a bound and shows how to practicall
 
 
 ### Proximal Policy Optimization (PPO)
+[Proximal Policy Optimization Algorithms](https://arxiv.org/pdf/1707.06347)
 
 Basically the conclusion of the TRPO paper is that we should be optimizing
 
@@ -274,8 +284,6 @@ Basically this is a piecewise linear function, that is linear in an $\epsilon$ r
 
 ![loss_clipping_img](/assets/images/rl_loss_clip.png "asdf")
 
-TODO: address why it's an on-policy method
-
 The whole point of this is to be able to perform multiple epochs of SGD on a batch of samples, such that we are able to update the network as much as is (safely) possible. The $\epsilon$ parameter adjusts how large this safe step is.
 
 As alluded to before, the advantage function $A_t$ can be estimated in multiple ways, but using Generalized Advantage Estimation is the most common approach.
@@ -283,12 +291,11 @@ As alluded to before, the advantage function $A_t$ can be estimated in multiple 
 In practice, PPO is simpler to implement, runs faster, and potentially even performs better than TRPO. PPO is probably the most common "baseline" policy gradient approach and is known for performing reliably and consistently compared to other methods.
 
 ### Asynchronous Methods for Deep Reinforcement Learning (A3C)
+[Asynchronous Methods for Deep Reinforcement Learning](https://arxiv.org/pdf/1602.01783)
 
 A fundamental problem for deep online RL is that a series of timesteps from the same episode is highly correlated, so training on sequential samples causes instability in the training - each of the correlated updates pushes the network parameters in a similar direction, causing a large change in the policy. Since most of the variance in a given update is noise, the large policy update is mostly in a random, not-useful direction, which disrupts learning.
 
 One solution to this is a replay buffer, like used in DQN, but this requires an off-policy learning algorithm since the samples in the replay buffer are from a different policy (an older policy) than the current policy.
-
-TODO: why do we want on-policy methods? have a discussion somewhere to link from here on the tradeoffs between them.
 
 So the core question in this paper is "how can we use on-policy algorithms but stabilize training?" The key insight is that if we run multiple instances of the environment simultaneously, and do asynchronous updates of the model from all of them, this will sufficiently decorrelate the updates and stabilize training.
 
@@ -302,8 +309,9 @@ There are a couple of implementation details that I noticed for the first time i
 In practice, the idea of having many instances of the environment running in parallel is now widely used to stabilize most on-policy policy gradient methods, eg PPO. It seems that there is little difference of applying the updates from each instance asynchronously or combining the samples from each instance into a single batch and applying the update synchronously, so the latter method is used more in practice for its simplicity.
 
 ### Emergence of Locomotion Behaviours in Rich Environments
+[Emergence of Locomotion Behaviours in Rich Environments](https://arxiv.org/pdf/1707.02286)
 
-The key question here is "how do we train complex, emergent behaviors with only simple reward functions in problems where the choice of reward function isn't clear, eg locomotion?"
+Not as much a "key algorithm" as the previous papers, but a good paper nonetheless. The key question here is "how do we train complex, emergent behaviors with only simple reward functions in problems where the choice of reward function isn't clear, eg locomotion?"
 
 The key idea is that a diverse and varied range of challenges for the agent to overcome (eg in locomotion, stuff like gaps, things to climb over, things to climb under, etc) naturally encourages robust behaviors even under a simple reward like "distance travelled from the origin".
 
@@ -398,13 +406,10 @@ The following technique was introduced in the TRPO paper and used in the PPO pap
 
 Basically we model the policy as a multivariate gaussian over action space with diagonal covariance (there's no correlation between different dimensions, ie it's a circular and not oval gaussian).
 
-Using neural nets, the main part of the network predicts the means of each dimension of the gaussian, and then there's a separate parameter that learns the log-std for each dimension (the same for all states, so it's independent of input). I'm not sure the advantage of log-std vs just regular, although certainly it would have some effect on the learning dynamics.
-
-Care will have to be taken when sampling to ensure that backprop works to both parts of this distribution. This is actually tricky - backprop through sampling always requires special approach. The Pytorch distributions module docs has some info on this.
-
-Actually that last part is not true - we don't need to backprop through the random sample. We just need to construct the pdf (which depends on the mean and std) to get the action probability used in the REINFORCE or PPO etc algorithms.
+Using neural nets, the main part of the network predicts the means of each dimension of the gaussian, and then there's a separate parameter that learns the log-std for each dimension (the same for all states, so it's independent of input). I'm not sure the advantage of log-std vs just regular, although certainly it would have some effect on the learning dynamics. One source mentioned that it's just because then we don't have to constrain the network to produce a positive value.
 
 ### Generalized Advantage Estimation
+[High-Dimensional Continuous Control Using Generalized Advantage Estimation](https://arxiv.org/pdf/1506.02438)
 
 In REINFORCE, we use the reward R_t as an estimate of how good an action is. This is naturally high-variance, because the future reward after an action is only very loosely correlated with the selected action (many other action selections also impacted that reward). So we want a lower-variance metric. The advantage function is apparently one of the lowest-variance metrics to use in place of R_t, since it directly evaluates how good an action selection is compared to the default selection.
 

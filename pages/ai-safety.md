@@ -36,8 +36,8 @@ When I was first thinking about AI, I was worried about AI safety, but I just so
 
 Since then, I've realized that this isn't the case, for a few reasons:
 
-- A lot of the problems in AI safety can already be reproduced in quite simple environments, and we don't have good solutions to the problems even in the toy environments. I go over a number of these specific problems in the Concrete Problems section below.
-- A lot of solutions apply much more generally than I would have guessed. For example, the paper [AI Safety Via Debate][debate] presents a method that may help humans to provide oversight to superintelligent AIs, and the only requirement is that the AIs have a text input/output interface with which to participate in debate. Even methods that are more specific often only make the assumption that the AI is trained in the context of Reinforcement Learning, which is simply a framework where an agent interacts with an environment and attempts to maximize the amount of some arbitrary reward it receives.
+- A lot of the problems in AI safety can already be reproduced in quite simple environments, and we don't have good solutions to the problems even in the toy environments. I go over a number of these specific problems in the [Concrete Problems](#concrete-problems) section.
+- A lot of solutions apply much more generally than I would have guessed. For example, the paper [AI Safety Via Debate][debate] presents a method that may help humans to provide oversight to superintelligent AIs, and the only requirement is that the AIs have a text input/output interface with which to participate in debate. Even methods that are more specific often only make the assumption that the AI is trained in the context of [reinforcement learning](/rl), which is simply a framework where an agent interacts with an environment and attempts to maximize the amount of some arbitrary reward it receives.
 - There's still a lot of work to be done in developing our theoretical understanding of the problem - eg what safe and aligned behavior even is - which will lay the foundations for future work.
 
 Given the volume of meaningful papers released in the past few years on AI safety, it seems clear that it's not too early to be working on this problem.
@@ -48,7 +48,7 @@ Thinking about specific problems really helped me understand what research on AI
 
 These problems are all "concrete" in the sense that they can be reproduced today, with today's level of AI. Specifically, these problems show up in the context of reinforcement learning (RL), which is the main branch of machine learning that focuses on building "agents" - systems that are designed to operate in an environment by taking in observations and selecting from the available actions. For example, a Romba vacuum cleaner uses sensors to periodically observe things like the distance to nearby objects, and selects which direction to move. RL agents are trained using a "reward signal" - a human-constructed function that provides "reward" to the agent when it does things that we want. In the training process for an RL agent, the agent interacts with the environment (real or simulated) many times, and algorithms optimize its action-selection network such that it selects actions which maximize the cumulative expected reward.
 
-If you're not familiar with RL, I'd highly recommend reviewing the RL introduction in OpenAI's series, "[Spinning up in Deep RL][spinning up intro]". This page gets increasingly math-heavy towards the end (and less relevant for the following discussion), so I'd focus on the first half. If you decide you want to do research in AI safety, having a deep understanding of RL both theoretically (understanding the algorithms) and practically (being able to train models) is super important. In that case I'd highly recommend going through the entirety of Spinning Up as it's the best practical introduction to deep (ie neural network-based) RL I've seen. I'd also recommend reading [Sutton and Barto], the famous classical textbook on RL.
+If you're not familiar with RL, I'd highly recommend reviewing the RL introduction in OpenAI's series, [Spinning up in Deep RL][spinning up intro]. This page gets increasingly math-heavy towards the end (and less relevant for the following discussion), so I'd focus on the first half. If you decide you want to do research in AI safety, having a deep understanding of RL both theoretically (understanding the algorithms) and practically (being able to train models) is super important. In that case I'd highly recommend going through the entirety of Spinning Up as it's the best practical introduction to deep (ie neural network-based) RL I've seen. I'd also recommend reading [Reinforcement Learning: An Introduction][sutton and barto], the famous classical textbook on RL.
 
 ### Safe Interruptability
 
@@ -56,13 +56,13 @@ Suppose I have a robot arm, and trained it to perform a task (eg making block to
 
 Of course this example is somewhat trivial - we could just move the button out of range of the robot arm. But as the agent gets more capable (being able to move, being able to talk, etc), and as RL training methods improve, the range of actions it can take to prevent us from shutting it down become greater.
 
-This is an excellent example of a general theme that we'll see in the other examples. The core problem of AI alignment is that we have specified a reward function that is completely "safe" (making block towers), and yet unsafe behavior has emerged. The problem isn't with what is "in" the reward function - it's in what's not. In this case, we didn't explicitly specify "don't stop us from pressing the button", so that behavior was learned as a simple accessory towards the main "safe" task. This is a general problem, known as "instrumental goals". Preventing us from shutting off the robot is an instrumental goal, because it's not the core goal of the robot, but it's a side goal that help the robot achieve the core goal. Instrumental goals that more powerful agents might learn to desire could be "more compute power", "escaping from this box", "more control over the physical world", etc.
+This is an example of a general theme that we'll see in the other examples. The core problem of AI alignment is that we have specified a reward function that is completely "safe" (making block towers), and yet unsafe behavior has emerged. The problem isn't with what is "in" the reward function - it's in what's not. In this case, we didn't explicitly specify "don't stop us from pressing the button", so that behavior was learned as a simple accessory towards the main "safe" task. This is a general problem, known as "instrumental goals". Preventing us from shutting off the robot is an instrumental goal, because it's not the core goal of the robot, but it's a side goal that help the robot achieve the core goal. Instrumental goals that more powerful agents might learn to desire could be "more compute power", "escaping from this box", "more control over the physical world", etc.
 
 You might think the solution is just to add to the reward function "don't stop us from pressing the e-stop button". That would be a solution, but the problem is that there are a multitude of instrumental goals and failure modes, some of which are very hard to specify specifically what we do and don't want (and some of which we might not have even discovered yet). In a simple environment like the robot arm, we could probably safely solve it this way. But in a more complex environment with a stronger AI, explicitly defining everything we don't want becomes impossible.
 
 ### Containment breach
 
-"Boxing" is a safety approach (discussed later) that attempts to make AI safe by containing it in a physical (or perhaps software) box, to prevent it from being able to access the rest of the world. Some might think that for an AI to escape the box, it would have to have explicit nefarious intentions. However, this is not the case.
+[Boxing](#physical-methods) is a safety approach that attempts to make AI safe by containing it in a physical (or perhaps software) box, to prevent it from being able to access the rest of the world. Some might think that for an AI to escape the box, it would have to have explicit nefarious intentions. However, this is not the case.
 
 Suppose we have a simple two-dimensional environment with an agent starting initially in a box. The box has a small hole, so the agent can potentially escape. The agent has a simple objective, entirely contained within the box - perhaps pressing some buttons when they turn a certain color.
 
@@ -75,7 +75,7 @@ But of course this example scales up out of toy scenarios. In almost any instanc
 
 ### Side effects
 
-I really like the example from Concrete Problems for this one. Suppose we have an office cleaning robot. We give it some reward function, like rewarding it for cleaning up dirt. Along the way to clean up the dirt, the robot knocks over a vase. This wasn't an accident - the robot decided it could get to where it wanted to go faster by knocking over the vase, and there was nothing in the reward function that caused it to avoid knocking over the vase.
+I really like the example from [Concrete Problems][concrete problems] for this one. Suppose we have an office cleaning robot. We give it some reward function, like rewarding it for cleaning up dirt. Along the way to clean up the dirt, the robot knocks over a vase. This wasn't an accident - the robot decided it could get to where it wanted to go faster by knocking over the vase, and there was nothing in the reward function that caused it to avoid knocking over the vase.
 
 This is an example of the general problem of "side effects" - things that have no impact positive or negative on the reward function, so the agent learns to be amivalent about the result. But in truth we do care that the vase remains upright, and we care about a huge multitude of potential things in the world (humans should remain alive, pollution should be avoided, resources should be conserved, etc). Obviously it's impossible to list out explicitly everything we care about except in the simplest of environments, so manually adding all the side constraints to the reward function is impossible.
 
@@ -146,10 +146,6 @@ So one approach to amplifying human capabilities is to simply allow the human to
 
 One such method is proposed in [Supervising strong learners by amplifying weak experts][ida], which we'll refer to as iterated distillation and amplification (IDA). The first key idea here is that many problems can likely be solved by the combination of (potentially many copies of) a weak helper-AI (which couldn't solve the problem on its own) and a human. Perhaps the human is able to break the problem down into multiple simpler sub-problems, and delegates them to the helper-AIs, and then combines the results into the final answer. For example, if the problem is "develop a strategy for winning this game", each helper-AI could propose a solution, and the human could simply choose the best one. Or if the problem were "predict the weather for next week", the human could delegate to one AI to investigate the wind patterns, another the humidity levels, a third to review the doppler radar reports, etc. Then, the second key idea is that we can actually recursively amplify the strength of the helper-AIs by training them (in a supervised learning setting) on the outputs of the augmented human-AI combo system. So at the beginning of the process, the helper-AIs don't know anything, and the human-AI combo is essentially no stronger than the human alone. But as we train the helper-AIs to predict the human's outputs, the helper-AIs start to become useful. Then the human-AI combo is more powerful than just the human alone, and so they can take on harder problems and produce better solutions. As the process continues, the AIs slowly become increasingly capable - even super-human, since they're being trained with superhuman reward signals. But fundamentally, since the human has been guiding the whole process and has final say over the answer to any given question, the whole process seems like it might potentially stay aligned with the human's interests.
 
-TODO: mention the company working on this
-
-TODO: cooperative inverse reinforcement learning?
-
 #### Alignment via feedback
 
 We agreed that there are many domains where providing demonstrations is hard, just because humans may not be very capable at doing the specific task we're trying to teach the AI to do (as in the example of teaching a complex non-humanoid robot to walk). In some situations, however, we might have a good idea of what we want the final result to look like, even if we aren't able to provide a demonstration. In the robot example, we're easily able to judge if the robot is walking well, even though it's near impossible for us to generate the walking behavior ourselves. So it's natural to consider if we can have an AI system learn our goals through many iterations of a process of asking the AI to provide an attempt at a problem, and then having a human judge the quality of the solution.
@@ -187,7 +183,7 @@ Certainly this is a hard problem for current machine learning systems. Unsupervi
 
 ### Podcasts
 
-I'm not usually a big fan of podcasts, but these gave me a lot of insight into the views of specific leading AI safety researchers. The one with Paul Christiano was especially wide-ranging and my personal favorite.
+I'm not usually a big fan of podcasts, but these gave me a lot of insight into the views of specific leading AI safety researchers.
 
 - 80,000 hours [Dr Paul Christiano on how OpenAI is developing real solutions to the 'AI alignment problem', and his vision of how humanity will progressively hand over decision-making to AI systems][paul podcast]
 - 80,000 hours [Dr Dario Amodei on OpenAI and how AI will change the world for good and ill][dario podcast]
@@ -226,9 +222,7 @@ I'm not usually a big fan of podcasts, but these gave me a lot of insight into t
 
 ### Programs
 
-- OpenAI fellows program: a 6-month fellowship to help people gain skills relevant for doing AI research
-- OpenAI scholars program: a 3-month program to help people from underrepresented groups gain deep learning skills
-- OpenAI internship: a 3-month program for undergraduate or graduate students to intern at OpenAI
+- OpenAI's fellows/scholars/internship programs
 - [MiriX](https://intelligence.org/mirix/): MIRI-sponsored independent workshops on AI alignment topics
 - [AI Risk for Computer Scientists](https://intelligence.org/ai-risk-for-computer-scientists/): a free 4-day program hosted by MIRI to help people learn about AI risks and safety
 - ..and certainly more - these are just the ones that I've specifically run across so far.
