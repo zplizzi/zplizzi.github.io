@@ -1092,6 +1092,17 @@ MARKDOWN_EXTENSION_CONFIGS = {
 # in the default template (base.tmpl).
 # (translatable)
 # BODY_END = ""
+BODY_END = """
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-21814433-5"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-21814433-5');
+</script>
+"""
 
 # The possibility to extract metadata from the filename by using a
 # regular expression.
@@ -1225,7 +1236,9 @@ WARN_ABOUT_TAG_METADATA = False
 
 # Put in global_context things you want available on all your templates.
 # It can be anything, data, functions, modules, etc.
-GLOBAL_CONTEXT = {}
+GLOBAL_CONTEXT = {
+    # 'analytics': ANALYTICS,
+}
 
 # Add functions here and they will be called with template
 # GLOBAL_CONTEXT as parameter when the template is about to be
