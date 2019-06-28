@@ -1,19 +1,18 @@
 /* all lifted directly from Gwern's CSS */
 
-/*********/
-/* FONTS */
-/*********/
-
 
 body {
     padding: 0;
-    margin: 0;
+    margin: auto;
+    max-width: 112ch;
+    line-height: 1.5;
 
     background-color: #fff;
     color: #000;
 
     font-weight: 400;
     font-family: "Source Serif Pro", Baskerville, "Libre Baskerville", serif;
+
 }
 
 /*********/
